@@ -83,6 +83,12 @@ A clean, pointed tip transfers heat well and makes soldering much easier:
 
 <img src="./images/02_solder_tip_cleaning/IMG_027_iron-tip.webp" width="280" alt="Clean tinned iron tip">
 
+> 🔥 **Never leave the iron on while idle.** Turn it off (or drop it to standby) any time you're not
+> soldering for more than a minute or so — and **always** when you walk away from your station. Besides
+> the fire/burn risk, a hot tip sitting idle **oxidizes**, and an oxidized tip transfers heat poorly,
+> which quietly ruins your joints. If a tip does dull or discolor, revive it: melt fresh solder onto it,
+> then wipe it on brass wool or a damp sponge — repeat until it's shiny again.
+
 ---
 
 ## 3. How to solder one joint
