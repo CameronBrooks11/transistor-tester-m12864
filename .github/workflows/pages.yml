@@ -30,7 +30,7 @@ jobs:
         with:
           source-dir: "."
           output-dir: "_site"
-          template: "github"
+          template: "default"
           stylesheet: "technical"
           site-title: "M12864 Transistor Tester"
           base-url: "https://cameronbrooks11.github.io/transistor-tester-m12864"
