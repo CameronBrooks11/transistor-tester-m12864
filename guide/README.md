@@ -42,6 +42,11 @@ socket and press the button.
 > lie flat, so they go first; the LCD and battery clip go last. That way the board always rests flat
 > while you solder.
 
+> ⚠️ **Safety & solder:** the iron tip reaches **300+ °C / 600+ °F** — park it in its stand, never on
+> the bench. Work in a **ventilated** area and don't breathe the flux smoke; **wash your hands** after
+> handling solder. For a first build, **leaded (60/40 or 63/37) rosin-core solder** is the most
+> forgiving to learn on — it melts cooler and flows more easily than lead-free.
+
 ---
 
 ## 1. Inventory & setup
@@ -84,9 +89,6 @@ A clean, pointed tip transfers heat well and makes soldering much easier:
 
 Let's do a single joint start to finish, so the rest of the build is just repetition.
 
-> 🆕 **New to soldering?** Read [SOLDERING.md](./SOLDERING.md) first — a short primer on technique, what
-> a good joint looks like, safety, and a few free resources.
-
 **1. Prep & insert the part.** Bend the leads to fit the footprint and push it through from the top side
 so it sits flat against the board.
 
@@ -108,6 +110,23 @@ lead — not a dull ball.
 <img src="./assets/03_first_component/IMG_042_trim-leads.webp" width="360" alt="Trimming the excess lead">
 
 > 🔁 That's the whole technique. Every part from here is: **insert → solder → trim.**
+
+### What a good joint looks like
+
+A good joint is shiny, smooth, and concave — a small "volcano" fillet wetting both the pad and the lead.
+If a joint isn't shiny and smooth, just reheat it; **most kit problems come down to one bad joint.**
+
+| Joint | Looks like | Fix |
+| --- | --- | --- |
+| ✅ **Good** | Shiny, smooth, concave fillet wetting both pad and lead | — |
+| ❌ **Cold joint** | Dull, grainy, or lumpy; doesn't wet the pad | Reheat until it flows and stays shiny |
+| ❌ **Insufficient solder** | Thin, no fillet; lead barely covered | Add a touch more solder |
+| ❌ **Too much solder** | A round ball; can hide a bad connection | Reheat and wick a little away |
+| ❌ **Solder bridge** | Solder connecting two pads that shouldn't touch | Remove with solder wick / desoldering braid |
+| ❌ **Disturbed joint** | Cracked or frosty (moved while cooling) | Reheat and hold still while it sets |
+
+> Hold each part still for a second after pulling the iron away — moving a joint while it solidifies is
+> what creates a cold joint. A joint usually needs only 2–3 seconds of heat.
 
 ---
 
@@ -232,3 +251,16 @@ A printable enclosure for this board is included in [`../case`](../case) (OpenSC
 
 > Most problems on a kit like this come down to a single bad joint. When in doubt, reflow the suspect
 > joints and recheck against the [schematic](./assets/schematic.png).
+
+---
+
+## New to soldering? Further reading
+
+- **["Soldering is Easy" comic](https://mightyohm.com/blog/2011/04/soldering-is-easy-comic-book/)** — a
+  7-page illustrated beginner guide (public domain). The best thing to read first.
+- **[Curious Inventor — "How to Solder Correctly… and Why"](https://store.curiousinventor.com/guides/How_to_Solder)**
+  — step-by-step with the reasoning behind each step, plus lots of good/bad joint photos.
+- **[PACE "Basic Soldering for Electronics" video series](https://www.youtube.com/results?search_query=pace+basic+soldering+for+electronics)**
+  — older but thorough; great close-ups of through-hole technique.
+- **[EEVblog soldering tutorial](https://www.youtube.com/watch?v=J5Sb21qbpEQ)** — an approachable
+  hands-on through-hole walkthrough.
