@@ -90,269 +90,269 @@ frq_d = 3.0;
 frq_d2 = 1.7;
 
 module nut(af, h) {
-  // af is 2*r
-  cylinder(r=af / 2 / cos(30), h=h, $fn=6);
+    // af is 2*r
+    cylinder(r=af / 2 / cos(30), h=h, $fn=6);
 }
 
 module c_cube(x, y, z) {
-  translate([-x / 2, -y / 2, 0]) cube([x, y, z]);
+    translate([-x / 2, -y / 2, 0]) cube([x, y, z]);
 }
 
 module cr_cube(x, y, z, r) {
-  hull() {
-    for (dx = [-1, 1]) for (dy = [-1, 1]) translate([dx * (x / 2 - r), dy * (y / 2 - r), 0]) cylinder(r=r, h=z, $fn=20);
-  }
+    hull() {
+        for (dx = [-1, 1]) for (dy = [-1, 1]) translate([dx * (x / 2 - r), dy * (y / 2 - r), 0]) cylinder(r=r, h=z, $fn=20);
+    }
 }
 
 module cr2_cube(x, y, z, r1, r2) {
-  hull() {
-    for (dx = [-1, 1]) for (dy = [-1, 1]) translate([dx * (x / 2 - r1), dy * (y / 2 - r1), 0]) cylinder(r1=r1, r2=r2, h=z, $fn=20);
-  }
+    hull() {
+        for (dx = [-1, 1]) for (dy = [-1, 1]) translate([dx * (x / 2 - r1), dy * (y / 2 - r1), 0]) cylinder(r1=r1, r2=r2, h=z, $fn=20);
+    }
 }
 
 module lever(part, extra, rot) {
-  d1 = 1.6;
-  d2 = 4.65;
-  l1 = 13.5; // entire
-  l2 = 4.0; // knob
-  translate([zif_x0 + zif_x / 2 - 2.0, zif_y0 + zif_y / 2 - d1 / 2, zif_z / 2]) rotate([0, rot, 0]) rotate([-3, 0, 0]) {
-        if (part == 1 || part == 1 + 2) cylinder(d=d1 + 2 * extra, h=l1, $fn=12);
-        if (part == 2 || part == 1 + 2)
-          hull()for (dz = [0, l2]) translate([0, 0, l1 - dz]) sphere(d=d2 + 2 * extra, $fn=12);
-        // slot for finger:
-        if (part == 4) translate([0, 0, 11.0]) cylinder(r1=0, r2=16.0, h=10.0, $fn=24);
-      }
+    d1 = 1.6;
+    d2 = 4.65;
+    l1 = 13.5; // entire
+    l2 = 4.0; // knob
+    translate([zif_x0 + zif_x / 2 - 2.0, zif_y0 + zif_y / 2 - d1 / 2, zif_z / 2]) rotate([0, rot, 0]) rotate([-3, 0, 0]) {
+                if (part == 1 || part == 1 + 2) cylinder(d=d1 + 2 * extra, h=l1, $fn=12);
+                if (part == 2 || part == 1 + 2)
+                    hull()for (dz = [0, l2]) translate([0, 0, l1 - dz]) sphere(d=d2 + 2 * extra, $fn=12);
+                // slot for finger:
+                if (part == 4) translate([0, 0, 11.0]) cylinder(r1=0, r2=16.0, h=10.0, $fn=24);
+            }
 }
 
 module lever_travel(extra) {
-  // room for zif handle in all directions
-  dr = 10.0; // step
-  render(4)for (r0 = [0:dr:90 - dr]) {
-    for (part = [1, 2, 4])
-      hull()for (r = [r0, r0 + dr]) lever(part, extra, r);
-  }
+    // room for zif handle in all directions
+    dr = 10.0; // step
+    render(4)for (r0 = [0:dr:90 - dr]) {
+        for (part = [1, 2, 4])
+            hull()for (r = [r0, r0 + dr]) lever(part, extra, r);
+    }
 }
 
 module internals(t) {
-  difference() {
-    translate([0, 0, -pcb_z]) cube([pcb_x, pcb_y, pcb_z]);
-    for (dx = [mnt_x1, pcb_x - mnt_x1])
-      for (dy = [mnt_y1, mnt_y2]) {
-        translate([dx, dy, -pcb_z - d]) cylinder(d=mnt_dia, h=pcb_z + 2 * d, $fn=20);
-        for (dx = [frq_x1, frq_x2]) translate([dx, frq_y, -pcb_z - d]) cylinder(d=1.0, h=pcb_z + 2 * d, $fn=8);
-      }
-  }
+    difference() {
+        translate([0, 0, -pcb_z]) cube([pcb_x, pcb_y, pcb_z]);
+        for (dx = [mnt_x1, pcb_x - mnt_x1])
+            for (dy = [mnt_y1, mnt_y2]) {
+                translate([dx, dy, -pcb_z - d]) cylinder(d=mnt_dia, h=pcb_z + 2 * d, $fn=20);
+                for (dx = [frq_x1, frq_x2]) translate([dx, frq_y, -pcb_z - d]) cylinder(d=1.0, h=pcb_z + 2 * d, $fn=8);
+            }
+    }
 
-  translate([(pcb_x - lcdpcb_x) / 2 - t, lcdpcb_y0 - t, (t == 0 ? lcd_spacer : 0)])
-    cube([lcdpcb_x + 2 * t, lcdpcb_y + t * t, lcdpcb_z + (t == 0 ? 0 : lcd_spacer + t)]);
-  translate([(pcb_x - lcdpcb_x) / 2, lcdpcb_y0 + 4.0, lcd_spacer + lcdpcb_z])
-    cube([lcdpcb_x, 36.0, lcdwin_z]);
-  for (dx = [lcdmnt_x, pcb_x - lcdmnt_x])
-    translate([dx, lcdmnt_y, 0])
-      cylinder(d=lcdmnt_d + 2 * t, h=lcd_spacer + lcdpcb_z + 2.7 + t, $fn=6);
+    translate([(pcb_x - lcdpcb_x) / 2 - t, lcdpcb_y0 - t, (t == 0 ? lcd_spacer : 0)])
+        cube([lcdpcb_x + 2 * t, lcdpcb_y + t * t, lcdpcb_z + (t == 0 ? 0 : lcd_spacer + t)]);
+    translate([(pcb_x - lcdpcb_x) / 2, lcdpcb_y0 + 4.0, lcd_spacer + lcdpcb_z])
+        cube([lcdpcb_x, 36.0, lcdwin_z]);
+    for (dx = [lcdmnt_x, pcb_x - lcdmnt_x])
+        translate([dx, lcdmnt_y, 0])
+            cylinder(d=lcdmnt_d + 2 * t, h=lcd_spacer + lcdpcb_z + 2.7 + t, $fn=6);
 
-  translate([zif_x0, zif_y0, -t])
-    cr_cube(zif_x + 2 * t, zif_y + 2 * t, zif_z + 2 * t, zif_r);
-  lever(1 + 2, 0, 0);
+    translate([zif_x0, zif_y0, -t])
+        cr_cube(zif_x + 2 * t, zif_y + 2 * t, zif_z + 2 * t, zif_r);
+    lever(1 + 2, 0, 0);
 
-  translate([led_x0, led_y0, 0])
-    cylinder(d=led_dia + 2 * t, h=20.0, $fn=20);
+    translate([led_x0, led_y0, 0])
+        cylinder(d=led_dia + 2 * t, h=20.0, $fn=20);
 
-  translate([sw_x0, sw_y0, 0]) {
-    cylinder(d=sw_dia, h=sw_z1, $fn=40);
-    cylinder(d=4.6, h=sw_z2, $fn=40);
-    translate([0, 0, sw_z2 - sw_knurl_z]) cylinder(d=sw_knurl_d, h=sw_knurl_z, $fn=40);
-    // switch body
-    translate([-12.5 / 2, -12.5 / 2, 0]) cube([12.5, 12.5, 7.0]);
-    // add room for power wire 
-    if (t > 0) rotate([0, 0, 40]) translate([-12.5 / 2, -12.5 / 2, 0]) cube([8.5, 12.5, 7.0 + 4.0]);
-  }
-  translate([59.2, 26.5, 0])
-    cylinder(d=5.0 + 2 * t, h=7.0 + t, $fn=12);
+    translate([sw_x0, sw_y0, 0]) {
+        cylinder(d=sw_dia, h=sw_z1, $fn=40);
+        cylinder(d=4.6, h=sw_z2, $fn=40);
+        translate([0, 0, sw_z2 - sw_knurl_z]) cylinder(d=sw_knurl_d, h=sw_knurl_z, $fn=40);
+        // switch body
+        translate([-12.5 / 2, -12.5 / 2, 0]) cube([12.5, 12.5, 7.0]);
+        // add room for power wire 
+        if (t > 0) rotate([0, 0, 40]) translate([-12.5 / 2, -12.5 / 2, 0]) cube([8.5, 12.5, 7.0 + 4.0]);
+    }
+    translate([59.2, 26.5, 0])
+        cylinder(d=5.0 + 2 * t, h=7.0 + t, $fn=12);
 
-  translate([(pcb_x - batt[0]) / 2, pcb_y + tol, tol - pcb_z - pcb_below])
-    cube([batt[0], batt[1], batt[2]]);
+    translate([(pcb_x - batt[0]) / 2, pcb_y + tol, tol - pcb_z - pcb_below])
+        cube([batt[0], batt[1], batt[2]]);
 }
 
 module top_r() {
-  difference() {
-    union() {
-      // add:
-      // top and side walls:
-      translate([pcb_x / 2, (pcb_y + batt[1] + tol) / 2, -pcb_z - pcb_below - wall]) {
-        difference() {
-          // case rough outline:
-          c_cube(pcb_x + 2 * tol + 2 * wall + 2 * d, pcb_y + 2 * tol + 2 * wall + tol + batt[1] + 2 * d, wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall + 0.5 * d);
-          // case internals:
-          translate([0, 0, -d]) hull() {
-              c_cube(pcb_x + 2 * tol, pcb_y + 2 * tol + tol + batt[1], d + wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol - (slant + 0.4 * wall));
-              c_cube(pcb_x + 2 * tol - 2 * (slant + 0.4 * wall), pcb_y + 2 * tol + tol + batt[1] - 2 * (slant + 0.4 * wall), d + wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol);
+    difference() {
+        union() {
+            // add:
+            // top and side walls:
+            translate([pcb_x / 2, (pcb_y + batt[1] + tol) / 2, -pcb_z - pcb_below - wall]) {
+                difference() {
+                    // case rough outline:
+                    c_cube(pcb_x + 2 * tol + 2 * wall + 2 * d, pcb_y + 2 * tol + 2 * wall + tol + batt[1] + 2 * d, wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall + 0.5 * d);
+                    // case internals:
+                    translate([0, 0, -d]) hull() {
+                            c_cube(pcb_x + 2 * tol, pcb_y + 2 * tol + tol + batt[1], d + wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol - (slant + 0.4 * wall));
+                            c_cube(pcb_x + 2 * tol - 2 * (slant + 0.4 * wall), pcb_y + 2 * tol + tol + batt[1] - 2 * (slant + 0.4 * wall), d + wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol);
+                        }
+                }
             }
+            // pcb mounts:
+            for (dx = [mnt_x1, pcb_x - mnt_x1])
+                for (dy = [mnt_y1, mnt_y2]) {
+                    translate([dx, dy, tol]) {
+                        cylinder(d=mnt_dia + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol, $fn=20);
+                    }
+                }
+            // mount support walls:
+            for (dx = [0, pcb_x])
+                for (dy = [mnt_y1, mnt_y2]) {
+                    translate([dx, dy, tol]) {
+                        c_cube(2 * tol + 2 * wall, wall, lcd_spacer + lcdpcb_z + lcdwin_z + tol);
+                    }
+                }
+            // support for led:
+            translate([led_x0, led_y0, tol]) {
+                cylinder(d=led_dia2 + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - tol, $fn=20);
+            }
+            // support for switch:
+            translate([sw_x0, sw_y0, sw_z0]) {
+                cylinder(d=sw_dia + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - sw_z0, $fn=40);
+            }
+            // frame for zif:
+            translate([zif_x0, zif_y0, tol]) {
+                cr_cube(zif_x + 2 * tol + 2 * wall, zif_y + 2 * tol + 2 * wall, lcd_spacer + lcdpcb_z + lcdwin_z + d, zif_r);
+                translate([0, 0, zif_z])
+                    cr2_cube(zif_x + 2 * tol + 2 * wall, zif_y + 2 * tol + 2 * wall, lcd_spacer + lcdpcb_z + lcdwin_z + d - zif_z, zif_r, zif_r2);
+                // pins 1-1-1-2-3-3-3
+            }
+            // frame for zif handle:
+            intersection() {
+                lever_travel(tol + wall);
+                cube([pcb_x + tol + wall, pcb_y, lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall]);
+            }
+            // dividing wall towards battery    
+            translate([pcb_x + tol + wall / 2 - (batt[0] - 5.0), pcb_y - wall, tol])
+                cube([batt[0] - 5.0, wall, -tol + lcd_spacer + lcdpcb_z + lcdwin_z + tol + d]);
+            // frq contact
+            for (dx = [frq_x1, frq_x2]) translate([dx, frq_y, tol]) cylinder(d=frq_d + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - tol, $fn=12);
         }
-      }
-      // pcb mounts:
-      for (dx = [mnt_x1, pcb_x - mnt_x1])
-        for (dy = [mnt_y1, mnt_y2]) {
-          translate([dx, dy, tol]) {
-            cylinder(d=mnt_dia + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol, $fn=20);
-          }
-        }
-      // mount support walls:
-      for (dx = [0, pcb_x])
-        for (dy = [mnt_y1, mnt_y2]) {
-          translate([dx, dy, tol]) {
-            c_cube(2 * tol + 2 * wall, wall, lcd_spacer + lcdpcb_z + lcdwin_z + tol);
-          }
-        }
-      // support for led:
-      translate([led_x0, led_y0, tol]) {
-        cylinder(d=led_dia2 + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - tol, $fn=20);
-      }
-      // support for switch:
-      translate([sw_x0, sw_y0, sw_z0]) {
-        cylinder(d=sw_dia + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - sw_z0, $fn=40);
-      }
-      // frame for zif:
-      translate([zif_x0, zif_y0, tol]) {
-        cr_cube(zif_x + 2 * tol + 2 * wall, zif_y + 2 * tol + 2 * wall, lcd_spacer + lcdpcb_z + lcdwin_z + d, zif_r);
-        translate([0, 0, zif_z])
-          cr2_cube(zif_x + 2 * tol + 2 * wall, zif_y + 2 * tol + 2 * wall, lcd_spacer + lcdpcb_z + lcdwin_z + d - zif_z, zif_r, zif_r2);
-        // pins 1-1-1-2-3-3-3
-      }
-      // frame for zif handle:
-      intersection() {
-        lever_travel(tol + wall);
-        cube([pcb_x + tol + wall, pcb_y, lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall]);
-      }
-      // dividing wall towards battery    
-      translate([pcb_x + tol + wall / 2 - (batt[0] - 5.0), pcb_y - wall, tol])
-        cube([batt[0] - 5.0, wall, -tol + lcd_spacer + lcdpcb_z + lcdwin_z + tol + d]);
-      // frq contact
-      for (dx = [frq_x1, frq_x2]) translate([dx, frq_y, tol]) cylinder(d=frq_d + 2 * tol + 2 * wall, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - tol, $fn=12);
-    }
-    union() {
-      // sub:
-      // mounts:
-      for (dx = [mnt_x1, pcb_x - mnt_x1])
-        for (dy = [mnt_y1, mnt_y2]) {
-          translate([dx, dy, 0]) cylinder(d=mnts_thr, h=lcd_spacer + lcdpcb_z + lcdwin_z - wall - 2.0, $fn=12);
-        }
-      // lcd window
-      translate([(pcb_x - lcdwin_x) / 2, lcdpcb_y0 + lcdwin_dy, 0]) {
-        cube([lcdwin_x, lcdwin_y, lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall + d]);
-        // add frame?
-      }
-      // led
-      translate([led_x0, led_y0, 0]) {
-        cylinder(d=led_dia + 2 * tol, h=20.0, $fn=20);
-        cylinder(d=led_dia2 + 2 * tol, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol, $fn=20); // frame
-      }
-      // switch
-      translate([sw_x0, sw_y0, 0]) {
-        cylinder(d=sw_knurl_d + 2 * tol, h=20.0, $fn=40);
-        cylinder(d=sw_dia + 2 * tol, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - sw_z0, $fn=40); // frame
-        c_cube(9.0 + 2 * tol, 9.0 + 2 * tol, sw_z0 - d);
-      }
-      // zif socket
-      translate([zif_x0, zif_y0, 0]) {
-        translate([0, 0, zif_z])
-          cr2_cube(zif_x + 2 * tol, zif_y + 2 * tol, lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall + d - zif_z, zif_r, zif_r2);
-        // recess
-        // BUG: frame
-      }
-      // room for zif handle in all directions
-      lever_travel(tol);
-      // frq contact
-      for (dx = [frq_x1, frq_x2])
-        translate([dx, frq_y, 0]) {
-          cylinder(d=frq_d2, h=20.0, $fn=12);
-          cylinder(d=frq_d + 2 * tol, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol, $fn=12);
-        }
-      // pin numbering 
-      translate([20.2, 26.7, lcd_spacer + lcdpcb_z + lcdwin_z + tol + 0.5 * wall])
-        linear_extrude(height=wall) text(text="1112333", size=7.0, font="Helvetica");
+        union() {
+            // sub:
+            // mounts:
+            for (dx = [mnt_x1, pcb_x - mnt_x1])
+                for (dy = [mnt_y1, mnt_y2]) {
+                    translate([dx, dy, 0]) cylinder(d=mnts_thr, h=lcd_spacer + lcdpcb_z + lcdwin_z - wall - 2.0, $fn=12);
+                }
+            // lcd window
+            translate([(pcb_x - lcdwin_x) / 2, lcdpcb_y0 + lcdwin_dy, 0]) {
+                cube([lcdwin_x, lcdwin_y, lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall + d]);
+                // add frame?
+            }
+            // led
+            translate([led_x0, led_y0, 0]) {
+                cylinder(d=led_dia + 2 * tol, h=20.0, $fn=20);
+                cylinder(d=led_dia2 + 2 * tol, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol, $fn=20); // frame
+            }
+            // switch
+            translate([sw_x0, sw_y0, 0]) {
+                cylinder(d=sw_knurl_d + 2 * tol, h=20.0, $fn=40);
+                cylinder(d=sw_dia + 2 * tol, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol - sw_z0, $fn=40); // frame
+                c_cube(9.0 + 2 * tol, 9.0 + 2 * tol, sw_z0 - d);
+            }
+            // zif socket
+            translate([zif_x0, zif_y0, 0]) {
+                translate([0, 0, zif_z])
+                    cr2_cube(zif_x + 2 * tol, zif_y + 2 * tol, lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall + d - zif_z, zif_r, zif_r2);
+                // recess
+                // BUG: frame
+            }
+            // room for zif handle in all directions
+            lever_travel(tol);
+            // frq contact
+            for (dx = [frq_x1, frq_x2])
+                translate([dx, frq_y, 0]) {
+                    cylinder(d=frq_d2, h=20.0, $fn=12);
+                    cylinder(d=frq_d + 2 * tol, h=lcd_spacer + lcdpcb_z + lcdwin_z + tol, $fn=12);
+                }
+            // pin numbering 
+            translate([20.2, 26.7, lcd_spacer + lcdpcb_z + lcdwin_z + tol + 0.5 * wall])
+                linear_extrude(height=wall) text(text="1112333", size=7.0, font="Helvetica");
 
-      // internals in general
-      internals(tol);
+            // internals in general
+            internals(tol);
+        }
     }
-  }
 }
 
 module top() {
-  intersection() {
-    // rough exterior
-    top_r();
-    // case real exterior
-    translate([pcb_x / 2, (pcb_y + batt[1] + tol) / 2, -pcb_z - pcb_below - wall]) hull() {
-        cr_cube(pcb_x + 2 * tol + 2 * wall, pcb_y + 2 * tol + 2 * wall + tol + batt[1], wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall - slant, wall);
-        cr_cube(pcb_x + 2 * tol + 2 * wall - 2 * slant, pcb_y + 2 * tol + 2 * wall + tol + batt[1] - 2 * slant, wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall, wall);
-      }
-  }
+    intersection() {
+        // rough exterior
+        top_r();
+        // case real exterior
+        translate([pcb_x / 2, (pcb_y + batt[1] + tol) / 2, -pcb_z - pcb_below - wall]) hull() {
+                cr_cube(pcb_x + 2 * tol + 2 * wall, pcb_y + 2 * tol + 2 * wall + tol + batt[1], wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall - slant, wall);
+                cr_cube(pcb_x + 2 * tol + 2 * wall - 2 * slant, pcb_y + 2 * tol + 2 * wall + tol + batt[1] - 2 * slant, wall + pcb_below + pcb_z + lcd_spacer + lcdpcb_z + lcdwin_z + tol + wall, wall);
+            }
+    }
 }
 
 module bot() {
-  difference() {
-    union() {
-      // add:
-      // bottom wall:
-      translate([pcb_x / 2, (pcb_y + tol + batt[1]) / 2, -pcb_z - pcb_below - wall]) {
-        c_cube(pcb_x, pcb_y + tol + batt[1], wall);
-      }
+    difference() {
+        union() {
+            // add:
+            // bottom wall:
+            translate([pcb_x / 2, (pcb_y + tol + batt[1]) / 2, -pcb_z - pcb_below - wall]) {
+                c_cube(pcb_x, pcb_y + tol + batt[1], wall);
+            }
 
-      // pcb mounts:
-      for (dx = [mnt_x1, pcb_x - mnt_x1])
-        for (dy = [mnt_y1, mnt_y2]) {
-          translate([dx, dy, -pcb_z - pcb_below]) {
-            cylinder(d=mnt_dia + 2 * tol + 2 * wall, h=pcb_below - tol, $fn=20);
-          }
+            // pcb mounts:
+            for (dx = [mnt_x1, pcb_x - mnt_x1])
+                for (dy = [mnt_y1, mnt_y2]) {
+                    translate([dx, dy, -pcb_z - pcb_below]) {
+                        cylinder(d=mnt_dia + 2 * tol + 2 * wall, h=pcb_below - tol, $fn=20);
+                    }
+                }
+            // strengthening bars around circumference:
+            for (dx = [0, pcb_x - wall])
+                translate([dx, 0, -pcb_z - pcb_below])
+                    cube([wall, pcb_y + tol + batt[1], wall]);
+            translate([0, 0, -pcb_z - pcb_below])
+                cube([pcb_x, wall, wall]);
+            // strengthening bars under battery:
+            for (dx = [0, pcb_x - wall])
+                translate([dx, mnt_y1, -pcb_z - pcb_below])
+                    cube([wall, pcb_y + tol + batt[1] - mnt_y1, pcb_below - tol]);
+            translate([0, pcb_y + tol + batt[1] - wall, -pcb_z - pcb_below])
+                cube([pcb_x, wall, pcb_below - tol]);
         }
-      // strengthening bars around circumference:
-      for (dx = [0, pcb_x - wall])
-        translate([dx, 0, -pcb_z - pcb_below])
-          cube([wall, pcb_y + tol + batt[1], wall]);
-      translate([0, 0, -pcb_z - pcb_below])
-        cube([pcb_x, wall, wall]);
-      // strengthening bars under battery:
-      for (dx = [0, pcb_x - wall])
-        translate([dx, mnt_y1, -pcb_z - pcb_below])
-          cube([wall, pcb_y + tol + batt[1] - mnt_y1, pcb_below - tol]);
-      translate([0, pcb_y + tol + batt[1] - wall, -pcb_z - pcb_below])
-        cube([pcb_x, wall, pcb_below - tol]);
+        union() {
+            // sub:
+            // mounts:
+            for (dx = [mnt_x1, pcb_x - mnt_x1])
+                for (dy = [mnt_y1, mnt_y2])
+                    translate([dx, dy, -pcb_z - pcb_below - wall - d]) {
+                        cylinder(d=mnt_dia + 2 * tol, h=d + wall + pcb_below, $fn=20);
+                        cylinder(d1=mnt_head, d2=0, h=mnt_head / 2, $fn=20);
+                    }
+        }
     }
-    union() {
-      // sub:
-      // mounts:
-      for (dx = [mnt_x1, pcb_x - mnt_x1])
-        for (dy = [mnt_y1, mnt_y2])
-          translate([dx, dy, -pcb_z - pcb_below - wall - d]) {
-            cylinder(d=mnt_dia + 2 * tol, h=d + wall + pcb_below, $fn=20);
-            cylinder(d1=mnt_head, d2=0, h=mnt_head / 2, $fn=20);
-          }
-    }
-  }
 }
 
 module knob_int() {
-  w = pi * knob_inner_dia / knob_knurls;
-  cylinder(r=knob_inner_dia / 2, h=knob_height, $fn=knob_knurls);
-  for (a = [0:360 / knob_knurls:360 - d]) {
-    rotate([0, 0, a])
-      translate([knob_inner_dia / 2, 0, 0])
-        cylinder(r=w / 2, h=knob_height);
-  }
+    w = pi * knob_inner_dia / knob_knurls;
+    cylinder(r=knob_inner_dia / 2, h=knob_height, $fn=knob_knurls);
+    for (a = [0:360 / knob_knurls:360 - d]) {
+        rotate([0, 0, a])
+            translate([knob_inner_dia / 2, 0, 0])
+                cylinder(r=w / 2, h=knob_height);
+    }
 }
 
 module knob() {
-  rx = wall + (knob_inner_dia + 0.8) / 2;
-  difference() {
-    union() {
-      cylinder(r=rx, h=knob_height, $fn=12);
-      translate([0, 0, knob_height - d]) cylinder(r1=rx, r2=rx - wall, h=wall + d, $fn=12);
+    rx = wall + (knob_inner_dia + 0.8) / 2;
+    difference() {
+        union() {
+            cylinder(r=rx, h=knob_height, $fn=12);
+            translate([0, 0, knob_height - d]) cylinder(r1=rx, r2=rx - wall, h=wall + d, $fn=12);
+        }
+        union() {
+            translate([0, 0, -d]) knob_int();
+        }
     }
-    union() {
-      translate([0, 0, -d]) knob_int();
-    }
-  }
 }
 
 if (part == "demo" || part == "int") color("green") internals(0);
